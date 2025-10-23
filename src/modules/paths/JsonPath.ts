@@ -18,11 +18,19 @@ export class JsonPath {
     this.cwd = process.cwd();
     this.CONFIG_FILE = path.join(this._dirname, "paths.json");
     if (!fs.existsSync(this.CONFIG_FILE)) {
-      fs.writeFileSync(this.CONFIG_FILE, JSON.stringify({
-        modules: "",
-        components: "",
-        ui: ""
-      }, null, 2), "utf8");
+      fs.writeFileSync(
+        this.CONFIG_FILE,
+        JSON.stringify(
+          {
+            modules: "",
+            components: "",
+            ui: "",
+          },
+          null,
+          2
+        ),
+        "utf8"
+      );
     }
     this.setResourcePaths();
   }
@@ -68,6 +76,10 @@ export class JsonPath {
   }
   get uiPath(): string {
     return this.getPath("ui");
+  }
+
+  getThemePath(): string {
+    return this.cwd;
   }
 
   setResourcePaths(base: TBase = "cwd"): void {

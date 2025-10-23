@@ -1,1 +1,1 @@
-export type TJsonPath = 'modules' | 'components' | 'ui';
+export type TJsonPath = 'modules' | 'components' | 'ui' ;
