@@ -206,7 +206,7 @@ export class FileHandle {
     nodes.forEach((node, i) => {
       const idxArr = [...prefix, i];
       const idxStr = idxArr.join(".");
-      const marker = `${i})`;
+      const marker = `${i}.`;
       const suffix = node.isDir ? "/" : "";
       const line =
         level === 0 ? `${marker}${node.name}${suffix}` : `${dash}${marker}${node.name}${suffix}`;
