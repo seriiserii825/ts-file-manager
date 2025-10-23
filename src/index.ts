@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
+import { JsonPath } from "./modules/paths/JsonPath.js";
+
 async function main() {
-    console.log("Hello, World!");
+  new JsonPath();
 }
 
 main();
