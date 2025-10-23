@@ -51,7 +51,7 @@ export class FileHandle {
     nodes.forEach((node, i) => {
       const idxArr = [...prefix, i];
       const idxStr = idxArr.join(".");
-      const marker = `${i}).`;
+      const marker = `${i}.`;
       const suffix = node.isDir ? "/" : "";
       const line =
         level === 0 ? `${marker}${node.name}${suffix}` : `${dash}${marker}${node.name}${suffix}`;
@@ -122,6 +122,7 @@ export class FileHandle {
           { label: "📄 Create new file here", value: "mkfile" },
           { label: "✏️  Rename", value: "rename" },
           { label: "🗑️  Delete", value: "delete" },
+          { label: "🚪 Exit to previous menu", value: "exit" },
         ] as const;
 
         const action = Select.selectOne(
@@ -171,6 +172,9 @@ export class FileHandle {
             lastPath = path.dirname(node.absPath); // fallback to parent
             indexToNode = await rebuild();
           }
+        }
+        else if (action === "exit") {
+          process.exit(0);
         }
       }
 
