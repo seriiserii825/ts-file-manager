@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import fileMenu from "./menus/fileMenu.js";
 import mainMenu from "./menus/mainMenu.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
@@ -25,6 +26,9 @@ async function main() {
       console.log("Exiting...");
       return
   }
+
+  const file_menu_choice = await fileMenu();
+  console.log("file_menu_choice", file_menu_choice);
 }
 
 main();
