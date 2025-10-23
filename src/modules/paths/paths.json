@@ -1,5 +1,5 @@
 {
-  "modules": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/modules",
-  "components": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/components",
-  "ui": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/ui"
+  "modules": "/home/serii/Local Sites/lc-bcm-meccanica/app/public/wp-content/themes/bs-bcm-meccanica/modules",
+  "components": "/home/serii/Local Sites/lc-bcm-meccanica/app/public/wp-content/themes/bs-bcm-meccanica/components",
+  "ui": "/home/serii/Local Sites/lc-bcm-meccanica/app/public/wp-content/themes/bs-bcm-meccanica/ui"
 }
