@@ -7,10 +7,7 @@ type AnyOpt = { label: string; value: string };
 // T is a readonly array/tuple of options.
 // The return type is the union of all option .value's.
 export default class Select {
-  static selectOne<T extends readonly AnyOpt[]>(
-    message: string,
-    options: T
-  ): T[number]["value"] {
+  static selectOne<T extends readonly AnyOpt[]>(message: string, options: T): T[number]["value"] {
     const labels = options.map((o) => o.label);
 
     console.log(chalk.blue(message));
@@ -38,21 +35,18 @@ export default class Select {
 
     console.log(chalk.blue(message));
     try {
-      const output = execSync(
-        `fzf --multi --no-clear --height=10 --reverse --prompt='Select> '`,
-        {
-          encoding: "utf8",
-          stdio: ["pipe", "pipe", "inherit"],
-          input: labels.join("\n"),
-        }
-      )
+      const output = execSync(`fzf --multi --no-clear --height=10 --reverse --prompt='Select> '`, {
+        encoding: "utf8",
+        stdio: ["pipe", "pipe", "inherit"],
+        input: labels.join("\n"),
+      })
         .trim()
         .split("\n")
         .filter(Boolean);
 
-      const picked = options
-        .filter((o) => output.includes(o.label))
-        .map((o) => o.value) as Array<T[number]["value"]>;
+      const picked = options.filter((o) => output.includes(o.label)).map((o) => o.value) as Array<
+        T[number]["value"]
+      >;
 
       return picked;
     } catch {

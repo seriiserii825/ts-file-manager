@@ -16,12 +16,14 @@ async function main() {
     case "module": {
       console.log("Module selected");
       const base = jp.getPath("modules"); // absolute base path to modules
-      const selected = await FileHandle.chooseOrCreateUnder(base, { allowNested: true });
-
-      console.log("Selected/created:", selected);
-      const dirs = await FileHandle.listDirForDirs(base);
-      console.log("Current subdirs:", dirs);
-      break;
+      const path = await FileHandle.chooseFromIndexedTree(base)
+      console.log("path", path);
+      // await FileHandle.listDirsTree(base);
+      // FileHandle.listDirsFromDir(base)
+      // const selected = await FileHandle.chooseOrCreateUnder(base, { allowNested: true });
+      // console.log("selected", selected);
+      // await FileHandle.listDirsTree(base);
+      // break;
     }
     case "component":
       console.log("Component selected");
