@@ -1,22 +1,28 @@
-#!/usr/bin/env node
-
-import fileMenu from "./menus/fileMenu.js";
+// main.ts
 import mainMenu from "./menus/mainMenu.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
-import {FileHandle} from "./modules/files/FileHandle.js";
+import { FileHandle } from "./modules/files/FileHandle.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
 import { JsonPath } from "./modules/paths/JsonPath.js";
 
 async function main() {
   const app_path = new AppPaths();
-  new EnsureIsWp(app_path.getThemeDir());
-  new JsonPath();
+  new EnsureIsWp(app_path.getThemeDir()); // throws if not WP
+  const jp = new JsonPath();
 
   const menu_choice = await mainMenu();
+
   switch (menu_choice) {
-    case "module":
+    case "module": {
       console.log("Module selected");
+      const base = jp.getPath("modules"); // absolute base path to modules
+      const selected = await FileHandle.chooseOrCreateUnder(base, { allowNested: true });
+
+      console.log("Selected/created:", selected);
+      const dirs = await FileHandle.listDirForDirs(base);
+      console.log("Current subdirs:", dirs);
       break;
+    }
     case "component":
       console.log("Component selected");
       break;
@@ -27,17 +33,9 @@ async function main() {
       console.log("Exiting...");
       return;
   }
-
-  const file_menu_choice = await fileMenu();
-  console.log("file_menu_choice", file_menu_choice);
-
-  const theme_path = new JsonPath().getThemePath();
-  console.log("theme_path", theme_path);
-
-  const dirs = FileHandle.listDirForDirs(theme_path)
-  console.log("dirs", dirs);
-  const files = FileHandle.listDirForFiles(theme_path)
-  console.log("files", files);
 }
 
-main();
+main().catch(err => {
+  console.error("Fatal:", err instanceof Error ? err.message : err);
+  process.exitCode = 1;
+});
