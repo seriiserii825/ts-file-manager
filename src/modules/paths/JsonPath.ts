@@ -70,10 +70,6 @@ export class JsonPath {
     return this.getPath("ui");
   }
 
-  /**
-   * Записать/создать пути ресурсов относительно заданной базы.
-   * @param base "cwd" | "cwdParent" | абсолютный/относительный путь
-   */
   setResourcePaths(base: TBase = "cwd"): void {
     const baseDir = this.resolveBaseDir(base);
     (["modules", "components", "ui"] as const).forEach((key) => {

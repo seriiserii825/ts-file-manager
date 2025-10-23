@@ -1,5 +1,5 @@
 {
-  "modules": "/home/serii/Downloads/modules",
-  "components": "/home/serii/Downloads/components",
-  "ui": "/home/serii/Downloads/ui"
+  "modules": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/modules",
+  "components": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/components",
+  "ui": "/home/serii/Local Sites/lc-api/app/public/wp-content/themes/bs-vite/ui"
 }
