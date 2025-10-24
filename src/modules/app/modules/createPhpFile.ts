@@ -2,14 +2,14 @@ import { ChalkFzfPrompter } from "../../../ui/ChalkFzfPrompter.js";
 import { ChalkLogger } from "../../files/adapters/ChalkLogger.js";
 import { NodeFS } from "../../files/adapters/NodeFS.js";
 import isKebabCase from "../utils/isKebabCase.js";
-import { listFiles } from "../utils/listFiles.js";
+import listDirFiles from "../utils/listDirFiles.js";
 import showFileContent from "../utils/showFileContent.js";
 
-export default async function createPhpFile(base_path: string) {
+export default async function createPhpFile(base_path: string): Promise<string> {
   const fs = new NodeFS();
   const prompter = new ChalkFzfPrompter();
   const logger = new ChalkLogger();
-  await listFiles(base_path);
+  await listDirFiles(base_path);
   const name = await prompter.input({
     message: "Enter the PHP file name (without extension):",
     asyncValidate: async (input) => {
@@ -28,6 +28,7 @@ export default async function createPhpFile(base_path: string) {
   const phpTemplate = `<?php\n\n ?>\n<div class="${name.trim()}">\n    \n</div>\n`;
   await fs.writeFile(filePath, phpTemplate);
   logger.success(`PHP file created at: ${filePath}`);
-  await listFiles(base_path);
+  await listDirFiles(base_path);
   await showFileContent(filePath);
+  return filePath;
 }

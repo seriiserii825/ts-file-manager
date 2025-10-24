@@ -17,6 +17,7 @@ export class NodeFS implements FS {
   dirname = path.dirname.bind(path);
   relative = path.relative.bind(path);
   isAbsolute = path.isAbsolute.bind(path);
+  basename = path.basename.bind(path);
   join = path.join.bind(path);
 }
 

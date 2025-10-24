@@ -1,9 +1,11 @@
 import Select, { TSelectOne } from "../../classes/Select.js";
+import {TMainMenuResponse} from "../../menus/types/TMainMenuResponse.js";
 import { ChalkLogger } from "../files/adapters/ChalkLogger.js";
 import createJsFile from "./modules/createJsFile.js";
 import createPhpFile from "./modules/createPhpFile.js";
+import includePhpFile from "./modules/includePhpFile.js";
 
-export default async function appMenu(base_path: string) {
+export default async function appMenu(base_path: string, main_menu_choice: TMainMenuResponse) {
   const logger = new ChalkLogger();
   const file_types_options: TSelectOne[] = [
     { value: "php", label: "php" },
@@ -17,7 +19,9 @@ export default async function appMenu(base_path: string) {
   switch (base_option) {
     case "php":
       logger.info("=== php");
-      await createPhpFile(base_path);
+      const file_path = await createPhpFile(base_path);
+      await includePhpFile({ base_path, file_path, main_menu_choice });
+      logger.success("PHP file created and included successfully.");
       return;
     case "js":
       logger.info("=== js");

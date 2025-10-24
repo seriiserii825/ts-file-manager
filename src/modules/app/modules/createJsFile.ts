@@ -2,7 +2,7 @@ import {ChalkFzfPrompter} from "../../../ui/ChalkFzfPrompter.js";
 import {ChalkLogger} from "../../files/adapters/ChalkLogger.js";
 import { NodeFS } from "../../files/adapters/NodeFS.js";
 import isCamelCase from "../utils/isCamelCase.js";
-import {listFiles} from "../utils/listFiles.js";
+import listDirFiles from "../utils/listDirFiles.js";
 import showFileContent from "../utils/showFileContent.js";
 
 export default async function createJsFile(base_path: string) {
@@ -15,7 +15,7 @@ export default async function createJsFile(base_path: string) {
     await fs.mkdir(base_path);
     logger.info(`Created directory: ${base_path}`);
   }
-  await listFiles(base_path);
+  await listDirFiles(base_path);
   const name = await prompter.input({
     message: `Enter the ${ext} file name (without extension):`,
     asyncValidate: async (input) => {
@@ -34,6 +34,6 @@ export default async function createJsFile(base_path: string) {
   const template = `export default function ${name.trim()}() {\n    \n}\n`;
   await fs.writeFile(filePath, template);
   logger.success(`${ext} file created at: ${filePath}`);
-  await listFiles(base_path);
+  await listDirFiles(base_path);
   await showFileContent(filePath);
 }

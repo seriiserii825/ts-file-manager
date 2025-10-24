@@ -1,6 +1,6 @@
 import { NodeFS } from "../../files/adapters/NodeFS.js";
 
-export async function listFiles(dir_path: string, filter?: string) {
+export async function getLsFiles(dir_path: string, filter?: string): Promise<string[] | undefined> {
   const fs = new NodeFS();
   const files: string[] = [];
   await fs.readdir(dir_path).then((entries) => {
@@ -14,8 +14,6 @@ export async function listFiles(dir_path: string, filter?: string) {
     });
   });
   if (files.length > 0) {
-    files.forEach((file) => {
-      console.log(`... 📄 ${file}`);
-    });
+    return files;
   }
 }

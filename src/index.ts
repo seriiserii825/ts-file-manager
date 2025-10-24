@@ -14,7 +14,7 @@ async function main() {
 
   switch (menu_choice) {
     case "module": {
-      appMenu(jp.getModulesPath())
+      appMenu(jp.getModulesPath(), "module")
       return
     }
     case "component":
