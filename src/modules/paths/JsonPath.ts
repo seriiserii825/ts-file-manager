@@ -68,13 +68,13 @@ export class JsonPath {
     }
   }
 
-  get modulesPath(): string {
+  getModulesPath(): string {
     return this.getPath("modules");
   }
-  get componentsPath(): string {
+  getComponentsPath(): string {
     return this.getPath("components");
   }
-  get uiPath(): string {
+  getUiPath(): string {
     return this.getPath("ui");
   }
 

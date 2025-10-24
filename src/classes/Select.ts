@@ -2,12 +2,12 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 
-type AnyOpt = { label: string; value: string };
+export type TSelectOne = { label: string; value: string };
 
 // T is a readonly array/tuple of options.
 // The return type is the union of all option .value's.
 export default class Select {
-  static selectOne<T extends readonly AnyOpt[]>(message: string, options: T): T[number]["value"] {
+  static selectOne<T extends readonly TSelectOne[]>(message: string, options: T): T[number]["value"] {
     const labels = options.map((o) => o.label);
 
     console.log(chalk.blue(message));
@@ -27,7 +27,7 @@ export default class Select {
     return hit.value as T[number]["value"];
   }
 
-  static selectMultiple<T extends readonly AnyOpt[]>(
+  static selectMultiple<T extends readonly TSelectOne[]>(
     message: string,
     options: T
   ): Array<T[number]["value"]> {

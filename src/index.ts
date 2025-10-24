@@ -1,8 +1,8 @@
 // main.ts
 import mainMenu from "./menus/mainMenu.js";
+import appMenu from "./modules/app/index.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
 import { navigator } from "./modules/files/index.js";
-import { FileHandle } from "./modules/files/FileHandle.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
 import { JsonPath } from "./modules/paths/JsonPath.js";
 
@@ -15,20 +15,7 @@ async function main() {
 
   switch (menu_choice) {
     case "module": {
-      console.log("Module selected");
-      const selected = await navigator.chooseFromIndexedTree(
-        jp.getPath("modules"),
-        { allowNested: true } // разрешить "a/b/c" при создании папок
-      );
-      console.log("Выбранный путь:", selected);
-      // const path = await FileHandle.chooseFromIndexedTree(base)
-      // console.log("path", path);
-      // await FileHandle.listDirsTree(base);
-      // FileHandle.listDirsFromDir(base)
-      // const selected = await FileHandle.chooseOrCreateUnder(base, { allowNested: true });
-      // console.log("selected", selected);
-      // await FileHandle.listDirsTree(base);
-      // break;
+      appMenu(jp.getModulesPath())
     }
     case "component":
       console.log("Component selected");
