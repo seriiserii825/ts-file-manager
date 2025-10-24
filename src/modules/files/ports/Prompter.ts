@@ -4,6 +4,6 @@ export interface Prompter {
   select<T extends readonly { label: string; value: string }[]>(
     message: string,
     options: T
-  ): T[number]["value"]; // может быть sync (execSync), ядру всё равно
+  ): Promise<T[number]["value"]>; // может быть sync (execSync), ядру всё равно
 }
 

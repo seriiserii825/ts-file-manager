@@ -25,11 +25,21 @@ export class ChalkFzfPrompter implements Prompter {
     return value.trim();
   }
 
-  // ⬇⬇⬇ СИНХРОННЫЙ select, без async и без Promise
-  select<T extends readonly { label: string; value: string }[]>(
+  // // ⬇⬇⬇ СИНХРОННЫЙ select, без async и без Promise
+  // select<T extends readonly { label: string; value: string }[]>(
+  //   message: string,
+  //   options: T
+  // ): T[number]["value"] {
+  //   return SelectFzf.selectOne(message, options);
+  // }
+  //
+  // make it async
+  async select<T extends readonly { label: string; value: string }[]>(
     message: string,
     options: T
-  ): T[number]["value"] {
-    return SelectFzf.selectOne(message, options);
+  ): Promise<T[number]["value"]> {
+    // if SelectFzf.selectOne is sync, just wrap its result in Promise.resolve
+    const result = SelectFzf.selectOne(message, options);
+    return Promise.resolve(result);
   }
 }

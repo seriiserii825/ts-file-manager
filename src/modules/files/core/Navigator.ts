@@ -52,7 +52,7 @@ export class Navigator {
 
       if (!node.isDir) {
         // Selected a folder → show actions
-        action = this.prompter.select(
+        action = await this.prompter.select(
           `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
           [
             { label: "✏️  Rename file/folder", value: "rename" },
@@ -62,7 +62,7 @@ export class Navigator {
         );
       } else {
         // Selected a folder → show actions
-        action = this.prompter.select(
+        action = await this.prompter.select(
           `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
           [
             { label: "✅ Select folder", value: "select" },
@@ -99,7 +99,7 @@ export class Navigator {
         lastPath = await this.actions.rename(node.absPath, name);
         index = await this.rebuild(root);
       } else if (action === "delete") {
-        const confirm = this.prompter.select(`Delete "${node.name}"?`, [
+        const confirm = await this.prompter.select(`Delete "${node.name}"?`, [
           { label: "❌ No", value: "no" },
           { label: "✅ Yes, delete", value: "yes" },
         ] as const);
@@ -112,7 +112,7 @@ export class Navigator {
         break;
       }
 
-      const next = this.prompter.select("What's next?", [
+      const next = await this.prompter.select("What's next?", [
         { label: "🔁 Continue navigation", value: "continue" },
         { label: "✅ Return selected path", value: "return" },
       ] as const);
