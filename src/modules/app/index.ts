@@ -3,6 +3,7 @@ import {TMainMenuResponse} from "../../menus/types/TMainMenuResponse.js";
 import { ChalkLogger } from "../files/adapters/ChalkLogger.js";
 import createJsFile from "./modules/createJsFile.js";
 import createPhpFile from "./modules/createPhpFile.js";
+import createScssFile from "./modules/createScssFile.js";
 import includePhpFile from "./modules/includePhpFile.js";
 
 export default async function appMenu(base_path: string, main_menu_choice: TMainMenuResponse) {
@@ -28,7 +29,8 @@ export default async function appMenu(base_path: string, main_menu_choice: TMain
       await createJsFile(base_path);
       return;
     case "scss":
-      console.log(`You selected scss files in ${base_path}`);
+      logger.info("=== scss");
+      await createScssFile(base_path)
       return;
     case "icon":
       console.log(`You selected icon (svg) files in ${base_path}`);
