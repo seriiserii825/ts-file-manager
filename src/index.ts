@@ -1,6 +1,7 @@
 // main.ts
 import mainMenu from "./menus/mainMenu.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
+import { navigator } from "./modules/files/index.js";
 import { FileHandle } from "./modules/files/FileHandle.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
 import { JsonPath } from "./modules/paths/JsonPath.js";
@@ -15,9 +16,13 @@ async function main() {
   switch (menu_choice) {
     case "module": {
       console.log("Module selected");
-      const base = jp.getPath("modules"); // absolute base path to modules
-      const path = await FileHandle.chooseFromIndexedTree(base)
-      console.log("path", path);
+      const selected = await navigator.chooseFromIndexedTree(
+        jp.getPath("modules"),
+        { allowNested: true } // разрешить "a/b/c" при создании папок
+      );
+      console.log("Выбранный путь:", selected);
+      // const path = await FileHandle.chooseFromIndexedTree(base)
+      // console.log("path", path);
       // await FileHandle.listDirsTree(base);
       // FileHandle.listDirsFromDir(base)
       // const selected = await FileHandle.chooseOrCreateUnder(base, { allowNested: true });
@@ -37,7 +42,7 @@ async function main() {
   }
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error("Fatal:", err instanceof Error ? err.message : err);
   process.exitCode = 1;
 });
