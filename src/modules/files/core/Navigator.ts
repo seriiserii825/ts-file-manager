@@ -94,7 +94,6 @@ export class Navigator {
       } else if (action === "rename") {
         const name = await this.prompter.input({
           message: "New name:",
-          placeholder: node.name,
           defaultValue: node.name,
         });
         lastPath = await this.actions.rename(node.absPath, name);

@@ -16,12 +16,13 @@
 // │  └─ Navigator.ts          // Интерактивная навигация (цикл)
 // └─ index.ts                 // Композиция (связывание адаптеров и ядра)
 import { NodeFS } from "./adapters/NodeFS.js";
-import { FzfPrompter } from "./adapters/FzfPrompter.js";
 import { ChalkLogger } from "./adapters/ChalkLogger.js";
 import { Navigator } from "./core/Navigator.js";
+import {ChalkFzfPrompter} from "../../ui/ChalkFzfPrompter.js";
 
 const fs = new NodeFS();
-const prompter = new FzfPrompter();
+// const prompter = new FzfPrompter();
+const prompter = new ChalkFzfPrompter();
 const logger = new ChalkLogger();
 
 export const navigator = new Navigator(fs, prompter, logger);
