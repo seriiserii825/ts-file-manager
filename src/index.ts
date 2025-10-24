@@ -2,7 +2,6 @@
 import mainMenu from "./menus/mainMenu.js";
 import appMenu from "./modules/app/index.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
-import { navigator } from "./modules/files/index.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
 import { JsonPath } from "./modules/paths/JsonPath.js";
 
@@ -16,15 +15,13 @@ async function main() {
   switch (menu_choice) {
     case "module": {
       appMenu(jp.getModulesPath())
+      return
     }
     case "component":
-      console.log("Component selected");
-      break;
+      return
     case "ui":
-      console.log("UI selected");
-      break;
+      return
     case "exit":
-      console.log("Exiting...");
       return;
   }
 }
