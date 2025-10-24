@@ -47,14 +47,15 @@ export class Navigator {
         this.logger.warn(`Invalid index: ${indexInput}`);
         continue;
       }
-      
-      let action: "select" | "mkdir" | "mkfile" | "rename" | "delete" | "exit";
+
+      let action: "select" | "move" | "mkdir" | "mkfile" | "rename" | "delete" | "exit";
 
       if (!node.isDir) {
         // Selected a folder → show actions
         action = await this.prompter.select(
           `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
           [
+            { label: "🚚 Move node", value: "move" },
             { label: "✏️  Rename file/folder", value: "rename" },
             { label: "🗑️  Delete file/folder", value: "delete" },
             { label: "🚪 Exit", value: "exit" },
@@ -66,6 +67,7 @@ export class Navigator {
           `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
           [
             { label: "✅ Select folder", value: "select" },
+            { label: "🚚 Move node", value: "move" },
             { label: "📁 Create folder inside", value: "mkdir" },
             { label: "📄 Create file inside", value: "mkfile" },
             { label: "✏️  Rename file/folder", value: "rename" },
@@ -83,6 +85,79 @@ export class Navigator {
           placeholder: "new-folder",
         });
         lastPath = await this.actions.mkdir(node.absPath, name, !!opts?.allowNested);
+        index = await this.rebuild(root);
+      } else if (action === "move") {
+        const targetIndexRaw = await this.prompter.input({
+          message: "Enter target folder index to move into:",
+          placeholder: "0 or 0.1 or 0.2.1",
+        });
+        const target = targetIndexRaw ? index.get(targetIndexRaw.trim()) : undefined;
+
+        if (!target) {
+          this.logger.warn(`Invalid target index: ${targetIndexRaw}`);
+          // show menu again
+          continue;
+        }
+        if (!target.isDir) {
+          this.logger.warn("Target must be a folder.");
+          continue;
+        }
+
+        const src = node.absPath;
+        const dstDir = target.absPath;
+
+        // no-op guard
+        if (this.sameDir(src, dstDir)) {
+          this.logger.info("Already in that folder.");
+          continue;
+        }
+
+        // self/descendant guard (only matters for directories)
+        if (node.isDir && (src === dstDir || this.isStrictDescendant(src, dstDir))) {
+          this.logger.warn("Cannot move a folder into itself or its descendant.");
+          continue;
+        }
+
+        const proposed = this.fs.resolve(dstDir, node.name);
+        let finalPath: string;
+
+        if (await this.fs.exists(proposed)) {
+          const conflict = await this.prompter.select(
+            `“${this.fs.relative(root, proposed)}” already exists. Choose:`,
+            [
+              { label: "📝 Rename", value: "rename" },
+              { label: "🧨 Overwrite", value: "overwrite" },
+              { label: "🙅 Cancel", value: "cancel" },
+            ] as const
+          );
+
+          if (conflict === "cancel") {
+            this.logger.info("Move cancelled.");
+            continue;
+          } else if (conflict === "rename") {
+            while (true) {
+              const newName = await this.prompter.input({
+                message: "New destination name:",
+                placeholder: node.name,
+                defaultValue: node.name,
+              });
+              const candidate = this.fs.resolve(dstDir, newName);
+              if (await this.fs.exists(candidate)) {
+                this.logger.warn("Name exists. Try another.");
+                continue;
+              }
+              finalPath = await this.actions.move(src, dstDir, { newName });
+              break;
+            }
+          } else {
+            // overwrite
+            finalPath = await this.actions.move(src, dstDir, { overwrite: true });
+          }
+        } else {
+          finalPath = await this.actions.move(src, dstDir);
+        }
+
+        lastPath = finalPath;
         index = await this.rebuild(root);
       } else if (action === "mkfile") {
         const name = await this.prompter.input({
@@ -122,5 +197,17 @@ export class Navigator {
     }
 
     return lastPath;
+  }
+
+  /** True if b is inside a (strictly), using only FS.relative/isAbsolute */
+  private isStrictDescendant(aAbs: string, bAbs: string): boolean {
+    const rel = this.fs.relative(aAbs, bAbs);
+    // b inside a  => rel does NOT start with "..", is NOT empty, and is NOT absolute
+    return !!rel && !rel.startsWith("..") && !this.fs.isAbsolute(rel);
+  }
+
+  /** Same dir? */
+  private sameDir(p1: string, p2: string): boolean {
+    return this.fs.dirname(p1) === p2;
   }
 }
