@@ -47,13 +47,22 @@ export class Navigator {
         this.logger.warn(`Invalid index: ${indexInput}`);
         continue;
       }
+      
+      let action: "select" | "mkdir" | "mkfile" | "rename" | "delete" | "exit";
 
       if (!node.isDir) {
-        // Selected a file → just remember and ask what's next
-        lastPath = node.absPath;
+        // Selected a folder → show actions
+        action = this.prompter.select(
+          `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
+          [
+            { label: "✏️  Rename file/folder", value: "rename" },
+            { label: "🗑️  Delete file/folder", value: "delete" },
+            { label: "🚪 Exit", value: "exit" },
+          ] as const
+        );
       } else {
         // Selected a folder → show actions
-        const action = this.prompter.select(
+        action = this.prompter.select(
           `Selected: ${this.fs.relative(root, node.absPath) || "."}`,
           [
             { label: "✅ Select folder", value: "select" },
@@ -64,44 +73,44 @@ export class Navigator {
             { label: "🚪 Exit", value: "exit" },
           ] as const
         );
+      }
 
-        if (action === "select") {
-          lastPath = node.absPath;
-        } else if (action === "mkdir") {
-          const name = await this.prompter.input({
-            message: "New folder name:",
-            placeholder: "new-folder",
-          });
-          lastPath = await this.actions.mkdir(node.absPath, name, !!opts?.allowNested);
+      if (action === "select") {
+        lastPath = node.absPath;
+      } else if (action === "mkdir") {
+        const name = await this.prompter.input({
+          message: "New folder name:",
+          placeholder: "new-folder",
+        });
+        lastPath = await this.actions.mkdir(node.absPath, name, !!opts?.allowNested);
+        index = await this.rebuild(root);
+      } else if (action === "mkfile") {
+        const name = await this.prompter.input({
+          message: "File name (with extension):",
+          placeholder: "file.txt",
+        });
+        lastPath = await this.actions.mkfile(node.absPath, name);
+        index = await this.rebuild(root);
+      } else if (action === "rename") {
+        const name = await this.prompter.input({
+          message: "New name:",
+          placeholder: node.name,
+          defaultValue: node.name,
+        });
+        lastPath = await this.actions.rename(node.absPath, name);
+        index = await this.rebuild(root);
+      } else if (action === "delete") {
+        const confirm = this.prompter.select(`Delete "${node.name}"?`, [
+          { label: "❌ No", value: "no" },
+          { label: "✅ Yes, delete", value: "yes" },
+        ] as const);
+        if (confirm === "yes") {
+          await this.actions.delete(node.absPath);
+          lastPath = this.fs.dirname(node.absPath);
           index = await this.rebuild(root);
-        } else if (action === "mkfile") {
-          const name = await this.prompter.input({
-            message: "File name (with extension):",
-            placeholder: "file.txt",
-          });
-          lastPath = await this.actions.mkfile(node.absPath, name);
-          index = await this.rebuild(root);
-        } else if (action === "rename") {
-          const name = await this.prompter.input({
-            message: "New name:",
-            placeholder: node.name,
-            defaultValue: node.name,
-          });
-          lastPath = await this.actions.rename(node.absPath, name);
-          index = await this.rebuild(root);
-        } else if (action === "delete") {
-          const confirm = this.prompter.select(`Delete "${node.name}"?`, [
-            { label: "❌ No", value: "no" },
-            { label: "✅ Yes, delete", value: "yes" },
-          ] as const);
-          if (confirm === "yes") {
-            await this.actions.delete(node.absPath);
-            lastPath = this.fs.dirname(node.absPath);
-            index = await this.rebuild(root);
-          }
-        } else if (action === "exit") {
-          break;
         }
+      } else if (action === "exit") {
+        break;
       }
 
       const next = this.prompter.select("What's next?", [
