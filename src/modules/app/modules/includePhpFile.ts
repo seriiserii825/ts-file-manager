@@ -12,9 +12,9 @@ export default async function includePhpFile(props: TIncludePhp): Promise<void> 
   const jp = new JsonPath();
   const theme_path = jp.getThemePath();
   const theme_root_files = await getLsFiles(theme_path, ".php");
-  const file_name = fs.basename(file_path, ".php");
-  const file_to_include = fs.join(main_menu_choice, file_name);
-  const template_to_include = `<?php get_template_part( '${file_to_include}' ); ?>`;
+  const created_file_name = fs.basename(file_path, ".php");
+  const created_file_path = fs.join(main_menu_choice, created_file_name);
+  const template_to_include = `<?php get_template_part( '${created_file_path}' ); ?>`;
   if (!theme_root_files) {
     console.log("No PHP files found in the theme root directory.");
     return;

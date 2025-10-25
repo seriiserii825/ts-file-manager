@@ -1,13 +1,5 @@
 import { promises as fsp } from "node:fs";
 
-/**
- * Вставляет contentToInsert ПЕРЕД строкой, где вызывается PHP-функция (например, get_footer()).
- * Корректно работает с `<?php get_footer(); ?>` и вариациями пробелов/табов.
- *
- * @param filePath путь к файлу
- * @param phpFn имя PHP-функции (напр. "get_footer")
- * @param contentToInsert текст для вставки (может включать/не включать PHP-теги)
- */
 export async function insertBeforeMarker(
   filePath: string,
   phpFn: string,
@@ -15,15 +7,8 @@ export async function insertBeforeMarker(
 ): Promise<void> {
   const data = await fsp.readFile(filePath, "utf8");
 
-  // определяем перевод строки файла
   const EOL = data.includes("\r\n") ? "\r\n" : "\n";
 
-  // Регэксп ищет строку, содержащую <?php ... get_footer(...) ... ?> (пробелы/табы допускаются)
-  // ^[ \t]*  — захватываем начальные пробелы, чтобы вставка могла сохранять "сетку" файла (если нужно)
-  // <\?php   — открывающий тег PHP
-  // .*?\bget_footer\s*\(.*?\)\s*;?\s* — сам вызов с любыми пробелами и необязательной точкой с запятой
-  // \?>?     — закрывающий тег может быть, а может и не быть (на всякий случай)
-  // с флагом m — построчный режим, чтобы ^ и $ работали по строкам
   const re = new RegExp(
     String.raw`^[ \t]*<\?php[^\n]*?\b${phpFn}\s*\(.*?\)\s*;?[^\n]*?\?>?`,
     "m"

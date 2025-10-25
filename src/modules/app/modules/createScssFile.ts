@@ -5,7 +5,7 @@ import isKebabCase from "../utils/isKebabCase.js";
 import listDirFiles from "../utils/listDirFiles.js";
 import showFileContent from "../utils/showFileContent.js";
 
-export default async function createScssFile(base_path: string) {
+export default async function createScssFile(base_path: string): Promise<string> {
   const logger = new ChalkLogger();
   const fs = new NodeFS();
   const prompter = new ChalkFzfPrompter();
@@ -36,4 +36,5 @@ export default async function createScssFile(base_path: string) {
   logger.success(`${ext} file created at: ${filePath}`);
   await listDirFiles(base_path);
   await showFileContent(filePath);
+  return filePath;
 }

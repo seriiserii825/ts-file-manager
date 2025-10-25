@@ -1,10 +1,11 @@
 import Select, { TSelectOne } from "../../classes/Select.js";
-import {TMainMenuResponse} from "../../menus/types/TMainMenuResponse.js";
+import { TMainMenuResponse } from "../../menus/types/TMainMenuResponse.js";
 import { ChalkLogger } from "../files/adapters/ChalkLogger.js";
 import createJsFile from "./modules/createJsFile.js";
 import createPhpFile from "./modules/createPhpFile.js";
 import createScssFile from "./modules/createScssFile.js";
 import includePhpFile from "./modules/includePhpFile.js";
+import includeScssFile from "./modules/includeScssFile.js";
 
 export default async function appMenu(base_path: string, main_menu_choice: TMainMenuResponse) {
   const logger = new ChalkLogger();
@@ -30,7 +31,8 @@ export default async function appMenu(base_path: string, main_menu_choice: TMain
       return;
     case "scss":
       logger.info("=== scss");
-      await createScssFile(base_path)
+      const created_scss_file_path = await createScssFile(base_path);
+      await includeScssFile({ base_path, file_path: created_scss_file_path, main_menu_choice });
       return;
     case "icon":
       console.log(`You selected icon (svg) files in ${base_path}`);
