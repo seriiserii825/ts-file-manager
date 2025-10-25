@@ -10,6 +10,10 @@ export class JsCreator extends BaseCreator {
     return "js";
   }
 
+  protected subdir(): string {
+    return "js";
+  }
+
   // Подсказываем формат в промпте
   protected formatHint(): string {
     return "camelCase";

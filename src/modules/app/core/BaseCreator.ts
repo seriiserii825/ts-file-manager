@@ -3,6 +3,7 @@ import { ensureKebabCase, ensureNonEmpty } from "./validators.js";
 import type { CreateContext } from "./types.js";
 import listDirFiles from "../utils/listDirFiles.js";
 import showFileContent from "../utils/showFileContent.js";
+import {renderTree} from "../utils/renderTree.js";
 
 export abstract class BaseCreator {
   protected subdir(): string {
@@ -32,14 +33,14 @@ export abstract class BaseCreator {
     const { fs, prompter, logger } = ctx;
     const ext = this.ext();
     const sub = this.subdir();
-    const workdir = sub ? fs.join(basePath, sub) : basePath;
+    const work_dir = sub ? fs.join(basePath, sub) : basePath;
 
-    if (!(await fs.exists(workdir))) {
-      await fs.mkdir(workdir);
-      logger.info(`Created directory: ${workdir}`);
+    if (!(await fs.exists(work_dir))) {
+      await fs.mkdir(work_dir);
+      logger.info(`Created directory: ${work_dir}`);
     }
 
-    await listDirFiles(workdir);
+    await renderTree(work_dir);
 
     const name = this.normalizeName(
       await prompter.input({
@@ -50,22 +51,22 @@ export abstract class BaseCreator {
           if (formatErr) return formatErr;
 
           // 2) уникальность файла
-          if (await fs.exists(fs.join(workdir, `${input.trim()}.${ext}`))) {
+          if (await fs.exists(fs.join(work_dir, `${input.trim()}.${ext}`))) {
             return "A file with this name already exists.";
           }
         },
       })
     );
 
-    const filePath = fs.join(workdir, `${name}.${ext}`);
+    const filePath = fs.join(work_dir, `${name}.${ext}`);
     await fs.writeFile(filePath, this.template(name));
     logger.success(`${ext.toUpperCase()} file created at: ${filePath}`);
 
-    await listDirFiles(workdir);
+    await renderTree(work_dir);
     await showFileContent(filePath);
 
     await this.postCreate(filePath, ctx);
-    await listDirFiles(workdir);
+    await renderTree(work_dir);
     return filePath;
   }
 }

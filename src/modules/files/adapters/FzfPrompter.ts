@@ -18,7 +18,10 @@ export class FzfPrompter implements Prompter {
     return mod.default({ message, placeholder, defaultValue });
   }
 
-  select<T extends readonly { label: string; value: string }[]>(message: string, options: T) {
+  select<T extends readonly { label: string; value: string }[]>(
+    message: string,
+    options: T
+  ): Promise<T[number]["value"]> {
     console.log(chalk.blue(message));
     const labels = options.map((o) => o.label);
     let choice = "";
@@ -33,6 +36,6 @@ export class FzfPrompter implements Prompter {
     }
     const hit = options.find((o) => o.label === choice);
     if (!hit) throw new Error(`Choice "${choice}" not found`);
-    return hit.value as T[number]["value"];
+    return Promise.resolve(hit.value as T[number]["value"]);
   }
 }

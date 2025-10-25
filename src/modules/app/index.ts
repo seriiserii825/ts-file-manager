@@ -7,6 +7,7 @@ import { FileTypeRegistry } from "./core/FileTypeRegistry.js";
 import { PhpCreator } from "./creators/PhpCreator.js";
 import { JsCreator } from "./creators/JsCreator.js";
 import { ScssCreator } from "./creators/ScssCreator.js";
+import {renderTree} from "./utils/renderTree.js";
 
 export default async function appMenu(basePath: string, mainMenuChoice: TMainMenuResponse) {
   const logger = new ChalkLogger();
@@ -19,6 +20,8 @@ export default async function appMenu(basePath: string, mainMenuChoice: TMainMen
     .register(new JsCreator())
     .register(new ScssCreator());
   // .register(new IconCreator()) и т.д.
+
+  await renderTree(basePath)
 
   const options = [
     ...registry.getOptions(),
