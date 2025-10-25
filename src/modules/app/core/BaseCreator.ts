@@ -62,11 +62,10 @@ export abstract class BaseCreator {
     await fs.writeFile(filePath, this.template(name));
     logger.success(`${ext.toUpperCase()} file created at: ${filePath}`);
 
-    await renderTree(work_dir);
     await showFileContent(filePath);
 
     await this.postCreate(filePath, ctx);
-    await renderTree(work_dir);
+    await renderTree(basePath);
     return filePath;
   }
 }
