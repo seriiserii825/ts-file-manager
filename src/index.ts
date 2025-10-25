@@ -1,6 +1,7 @@
 // main.ts
 import mainMenu from "./menus/mainMenu.js";
 import appMenu from "./modules/app/index.js";
+import {CreateEntity} from "./modules/app/modules/CreateEntity.js";
 import { EnsureIsWp } from "./modules/ensure/EnsureIsWp.js";
 import { AppPaths } from "./modules/paths/AppPaths.js";
 import { JsonPath } from "./modules/paths/JsonPath.js";
@@ -14,7 +15,9 @@ async function main() {
 
   switch (menu_choice) {
     case "module": {
-      appMenu(jp.getModulesPath(), "module")
+      const entity_path = await new CreateEntity(jp.getModulesPath()).run();
+      if (!entity_path) return;
+      appMenu(entity_path, "module")
       return
     }
     case "component":

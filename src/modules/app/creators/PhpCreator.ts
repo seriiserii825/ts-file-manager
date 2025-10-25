@@ -19,7 +19,6 @@ export class PhpCreator extends BaseCreator {
     await includePhpFile({
       base_path: "", // Возьмём из параметров вызова run (см. ниже)
       file_path: filePath,
-      main_menu_choice: ctx.mainMenuChoice,
     });
     ctx.logger.success("PHP file created and included successfully.");
   }

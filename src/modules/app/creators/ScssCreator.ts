@@ -19,7 +19,6 @@ export class ScssCreator extends BaseCreator {
     await includeScssFile({
       base_path: "", // см. run()
       file_path: filePath,
-      main_menu_choice: ctx.mainMenuChoice,
     });
     ctx.logger.success("SCSS file created and included successfully.");
   }
