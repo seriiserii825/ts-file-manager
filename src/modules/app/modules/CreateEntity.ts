@@ -1,11 +1,10 @@
 import { TOption } from "../../../types/TOption.js";
-import {ChalkFzfPrompter} from "../../../ui/ChalkFzfPrompter.js";
-import {ChalkLogger} from "../../files/adapters/ChalkLogger.js";
-import {NodeFS} from "../../files/adapters/NodeFS.js";
-import {FS} from "../../files/ports/Fs.js";
+import { ChalkFzfPrompter } from "../../../ui/ChalkFzfPrompter.js";
+import { ChalkLogger } from "../../files/adapters/ChalkLogger.js";
+import { NodeFS } from "../../files/adapters/NodeFS.js";
+import { FS } from "../../files/ports/Fs.js";
 import { Logger } from "../../files/ports/Logger.js";
 import { Prompter } from "../../files/ports/Prompter.js";
-import {ensureKebabCase} from "../core/validators.js";
 import { getLsDirs } from "../utils/getLsDirs.js";
 import { listDirs } from "../utils/listDirs.js";
 
@@ -21,20 +20,19 @@ export class CreateEntity {
     this.logger = new ChalkLogger();
     this.prompter = new ChalkFzfPrompter();
     this.fs = new NodeFS();
-
   }
   async run(): Promise<string | undefined> {
     await listDirs(this.base_path);
-    const current_path_dirs = await getLsDirs(this.base_path);
-    if (current_path_dirs.length === 0) {
-      this.logger.info("No directories found in the current path.");
-      return;
-    }
-
-    const choices = [
+    let choices = [
       { value: "create", label: "Create a new directory" },
       { value: "select", label: "Select an existing directory" },
     ];
+    const current_path_dirs = await getLsDirs(this.base_path);
+    if (current_path_dirs.length === 0) {
+      this.logger.info("No directories found in the current path.");
+      choices = [{ value: "create", label: "Create a new directory" }];
+    }
+
     const action = await this.prompter.select("What would you like to do?", choices);
 
     if (action === "create") {

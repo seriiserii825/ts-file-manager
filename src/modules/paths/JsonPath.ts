@@ -85,7 +85,7 @@ export class JsonPath {
   setResourcePaths(base: TBase = "cwd"): void {
     const baseDir = this.resolveBaseDir(base);
     (["modules", "components", "ui"] as const).forEach((key) => {
-      const fullPath = path.join(baseDir, key);
+      const fullPath = path.join(baseDir, `app/${key}`);
       this.setPath(key, fullPath);
       if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath, { recursive: true });

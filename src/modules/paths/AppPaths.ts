@@ -6,7 +6,6 @@ export class AppPaths {
   public theme_dir!: string;
   constructor() {
     this.cwd = process.cwd();
-    this.cwd = process.cwd();
     this.theme_dir = this.resolveBaseDir("cwd");
   }
 

@@ -1,7 +1,6 @@
 // core/BaseCreator.ts
 import { ensureKebabCase, ensureNonEmpty } from "./validators.js";
 import type { CreateContext } from "./types.js";
-import listDirFiles from "../utils/listDirFiles.js";
 import showFileContent from "../utils/showFileContent.js";
 import {renderTree} from "../utils/renderTree.js";
 
