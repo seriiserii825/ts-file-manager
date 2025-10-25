@@ -1,44 +1,51 @@
-import Select, { TSelectOne } from "../../classes/Select.js";
-import { TMainMenuResponse } from "../../menus/types/TMainMenuResponse.js";
 import { ChalkLogger } from "../files/adapters/ChalkLogger.js";
-import createJsFile from "./modules/createJsFile.js";
-import createPhpFile from "./modules/createPhpFile.js";
-import createScssFile from "./modules/createScssFile.js";
-import includePhpFile from "./modules/includePhpFile.js";
-import includeScssFile from "./modules/includeScssFile.js";
+import { NodeFS } from "../files/adapters/NodeFS.js";
+import { ChalkFzfPrompter } from "../../ui/ChalkFzfPrompter.js";
+import type { TMainMenuResponse } from "../../menus/types/TMainMenuResponse.js";
 
-export default async function appMenu(base_path: string, main_menu_choice: TMainMenuResponse) {
+import { FileTypeRegistry } from "./core/FileTypeRegistry.js";
+import { PhpCreator } from "./creators/PhpCreator.js";
+import { JsCreator } from "./creators/JsCreator.js";
+import { ScssCreator } from "./creators/ScssCreator.js";
+
+export default async function appMenu(basePath: string, mainMenuChoice: TMainMenuResponse) {
   const logger = new ChalkLogger();
-  const file_types_options: TSelectOne[] = [
-    { value: "php", label: "php" },
-    { value: "js", label: "js" },
-    { value: "scss", label: "scss" },
+  const fs = new NodeFS();
+  const prompter = new ChalkFzfPrompter();
+
+  // Регистрируем стратегии
+  const registry = new FileTypeRegistry()
+    .register(new PhpCreator())
+    .register(new JsCreator())
+    .register(new ScssCreator());
+  // .register(new IconCreator()) и т.д.
+
+  const options = [
+    ...registry.getOptions(),
     { value: "icon", label: "icon (svg)" },
     { value: "exit", label: "exit" },
   ];
 
-  const base_option = Select.selectOne("Select file type", file_types_options);
-  switch (base_option) {
-    case "php":
-      logger.info("=== php");
-      const file_path = await createPhpFile(base_path);
-      await includePhpFile({ base_path, file_path, main_menu_choice });
-      logger.success("PHP file created and included successfully.");
-      return;
-    case "js":
-      logger.info("=== js");
-      await createJsFile(base_path);
-      return;
-    case "scss":
-      logger.info("=== scss");
-      const created_scss_file_path = await createScssFile(base_path);
-      await includeScssFile({ base_path, file_path: created_scss_file_path, main_menu_choice });
-      return;
-    case "icon":
-      console.log(`You selected icon (svg) files in ${base_path}`);
-      return;
-    case "exit":
-      logger.error("Exiting the application.");
-      return;
+  const choice = await prompter.select("Select file type", options)
+
+  if (choice === "exit") {
+    logger.error("Exiting the application.");
+    return;
   }
+  if (choice === "icon") {
+    logger.info(`You selected icon (svg) files in ${basePath}`);
+    return;
+  }
+
+  const creator = registry.get(choice);
+  if (!creator) {
+    logger.error(`Unknown file type: ${choice}`);
+    return;
+  }
+
+  // Контекст для стратегий
+  const ctx = { fs, prompter, logger, mainMenuChoice, basePath };
+
+  // Вызов выбранной стратегии
+  await creator.run(basePath, ctx as any);
 }

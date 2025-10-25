@@ -1,9 +1,15 @@
-// Интерфейс для input/select. Реализация может быть через fzf/ink/любое UI.
+// ports/Prompter.ts
+type BaseInputOpts = {
+  message: string;
+  placeholder?: string;
+  defaultValue?: string;
+};
+
 export interface Prompter {
-  input(opts: { message: string; placeholder?: string; defaultValue?: string }): Promise<string>;
+  // Любые доп. поля поверх BaseInputOpts допустимы
+  input<T extends BaseInputOpts>(opts: T): Promise<string>;
   select<T extends readonly { label: string; value: string }[]>(
     message: string,
     options: T
-  ): Promise<T[number]["value"]>; // может быть sync (execSync), ядру всё равно
+  ): Promise<T[number]["value"]>;
 }
-

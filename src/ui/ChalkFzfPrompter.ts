@@ -48,7 +48,7 @@ export class ChalkFzfPrompter implements Prompter {
         throw new Error("Cancelled by user");
       }
 
-      return v;
+      return String(v);
     }
   }
 
