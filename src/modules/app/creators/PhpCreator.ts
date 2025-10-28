@@ -7,7 +7,9 @@ export class PhpCreator extends BaseCreator {
   readonly id = "php";
   readonly label = "php";
 
-  protected ext(): string { return "php"; }
+  protected ext(): string {
+    return "php";
+  }
 
   protected template(name: string): string {
     return `<?php
@@ -15,11 +17,8 @@ export class PhpCreator extends BaseCreator {
 ?>\n<div class="${name}">\n    \n</div>\n`;
   }
 
-  protected async postCreate(filePath: string, ctx: CreateContext) {
-    await includePhpFile({
-      base_path: "", // Возьмём из параметров вызова run (см. ниже)
-      file_path: filePath,
-    });
+  protected async postCreate(file_path: string, ctx: CreateContext) {
+    await includePhpFile(file_path);
     ctx.logger.success("PHP file created and included successfully.");
   }
 

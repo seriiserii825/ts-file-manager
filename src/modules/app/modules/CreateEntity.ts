@@ -24,8 +24,8 @@ export class CreateEntity {
   async run(): Promise<string | undefined> {
     await listDirs(this.base_path);
     let choices = [
-      { value: "create", label: "Create a new directory" },
       { value: "select", label: "Select an existing directory" },
+      { value: "create", label: "Create a new directory" },
     ];
     const current_path_dirs = await getLsDirs(this.base_path);
     if (current_path_dirs.length === 0) {
