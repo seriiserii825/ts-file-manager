@@ -32,9 +32,9 @@ export class PhpComponentCreator extends BaseCreator {
     ctx.logger.success("PHP file created and included successfully.");
   }
 
-  async run(basePath: string, ctx: CreateContext): Promise<void> {
+  async run(basePath: string, ctx: CreateContext): Promise<string> {
     // Передадим basePath позже в include (не меняем сигнатуру includePhpFile)
     const filePath = await this.create(basePath, ctx);
-    // includePhpFile уже вызван в postCreate()
+    return filePath;
   }
 }

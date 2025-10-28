@@ -11,6 +11,7 @@ import { renderTree } from "./utils/renderTree.js";
 import { PhpComponentCreator } from "./creators/PhpComponentCreator.js";
 import { PhpScssCreator } from "./creators/PhpScssCreator.js";
 import {JsonPath} from "../paths/JsonPath.js";
+import {PhpComponentScssCreator} from "./creators/PhpComponentScssCreator.js";
 
 export default async function appMenu(basePath: string, mainMenuChoice: TMainMenuResponse) {
   const logger = new ChalkLogger();
@@ -36,6 +37,7 @@ export default async function appMenu(basePath: string, mainMenuChoice: TMainMen
     registry
       .register(new PhpComponentCreator())
       .register(new ScssCreator())
+      .register(new PhpComponentScssCreator(basePath, ctx))
       .register(new JsCreator());
   }
 
