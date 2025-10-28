@@ -2,12 +2,10 @@ import Select, { TSelectOne } from "../../../classes/Select.js";
 import { NodeFS } from "../../files/adapters/NodeFS.js";
 import { Bash } from "../../files/command/Bash.js";
 import { JsonPath } from "../../paths/JsonPath.js";
-import {TIncludeFile} from "../types/TInclude.js";
 import { getLsFiles } from "../utils/getLsFiles.js";
 import { insertBeforeMarker } from "../utils/insertBeforeMarker.js";
 
-export default async function includePhpFile(props: TIncludeFile): Promise<void> {
-  const { file_path } = props;
+export default async function includePhpFile(file_path: string): Promise<void> {
   const fs = new NodeFS();
   const jp = new JsonPath();
   const theme_path = jp.getThemePath();
