@@ -2,7 +2,7 @@
 import { ensureKebabCase, ensureNonEmpty } from "./validators.js";
 import type { CreateContext } from "./types.js";
 import showFileContent from "../utils/showFileContent.js";
-import {renderTree} from "../utils/renderTree.js";
+import { renderTree } from "../utils/renderTree.js";
 
 export abstract class BaseCreator {
   protected subdir(): string {
@@ -28,11 +28,20 @@ export abstract class BaseCreator {
     return ensureNonEmpty(input) ?? ensureKebabCase(input);
   }
 
-  async create(basePath: string, ctx: CreateContext, start_name: string = ''): Promise<string> {
+  async create(
+    basePath: string,
+    ctx: CreateContext,
+    dir_path: string = "",
+    file_name: string = ""
+  ): Promise<string> {
     const { fs, prompter, logger } = ctx;
     const ext = this.ext();
     const sub = this.subdir();
-    const work_dir = sub ? fs.join(basePath, sub) : basePath;
+    let work_dir = sub ? fs.join(basePath, sub) : basePath;
+    if (dir_path) {
+      work_dir = dir_path;
+      work_dir = fs.join(work_dir, sub);
+    }
 
     if (!(await fs.exists(work_dir))) {
       await fs.mkdir(work_dir);
@@ -41,21 +50,23 @@ export abstract class BaseCreator {
 
     await renderTree(work_dir);
 
-    const name = start_name || this.normalizeName(
-      await prompter.input({
-        message: `Enter the ${ext} file name (${this.formatHint()}), without extension:`,
-        asyncValidate: async (input: string) => {
-          // 1) кастомная валидация формата
-          const formatErr = await this.validateName(input);
-          if (formatErr) return formatErr;
+    const name =
+      file_name ||
+      this.normalizeName(
+        await prompter.input({
+          message: `Enter the ${ext} file name (${this.formatHint()}), without extension:`,
+          asyncValidate: async (input: string) => {
+            // 1) кастомная валидация формата
+            const formatErr = await this.validateName(input);
+            if (formatErr) return formatErr;
 
-          // 2) уникальность файла
-          if (await fs.exists(fs.join(work_dir, `${input.trim()}.${ext}`))) {
-            return "A file with this name already exists.";
-          }
-        },
-      })
-    );
+            // 2) уникальность файла
+            if (await fs.exists(fs.join(work_dir, `${input.trim()}.${ext}`))) {
+              return "A file with this name already exists.";
+            }
+          },
+        })
+      );
 
     const filePath = fs.join(work_dir, `${name}.${ext}`);
     await fs.writeFile(filePath, this.template(name));

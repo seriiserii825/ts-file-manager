@@ -7,9 +7,13 @@ export class ScssCreator extends BaseCreator {
   readonly id = "scss";
   readonly label = "scss";
 
-  protected ext(): string { return "scss"; }
+  protected ext(): string {
+    return "scss";
+  }
 
-  protected subdir(): string { return "scss"; }
+  protected subdir(): string {
+    return "scss";
+  }
 
   protected template(name: string): string {
     return `.${name}{\n  opacity: 0;\n}\n`;
@@ -23,8 +27,12 @@ export class ScssCreator extends BaseCreator {
     ctx.logger.success("SCSS file created and included successfully.");
   }
 
-  async run(basePath: string, ctx: CreateContext, name: string = ''): Promise<void> {
-    const filePath = await this.create(basePath, ctx, name);
-    // includeScssFile уже вызван в postCreate()
+  async run(
+    basePath: string,
+    ctx: CreateContext,
+    dir_path = "",
+    file_name = ""
+  ): Promise<void> {
+    await this.create(basePath, ctx, dir_path, file_name);
   }
 }

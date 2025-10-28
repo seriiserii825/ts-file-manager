@@ -8,22 +8,35 @@ import { PhpCreator } from "./creators/PhpCreator.js";
 import { JsCreator } from "./creators/JsCreator.js";
 import { ScssCreator } from "./creators/ScssCreator.js";
 import { renderTree } from "./utils/renderTree.js";
-import {PhpComponentCreator} from "./creators/PhpComponentCreator.js";
+import { PhpComponentCreator } from "./creators/PhpComponentCreator.js";
+import { PhpScssCreator } from "./creators/PhpScssCreator.js";
+import {JsonPath} from "../paths/JsonPath.js";
 
 export default async function appMenu(basePath: string, mainMenuChoice: TMainMenuResponse) {
   const logger = new ChalkLogger();
   const fs = new NodeFS();
   const prompter = new ChalkFzfPrompter();
+  const jp = new JsonPath();
+
+  // Контекст для стратегий
+  const ctx = { fs, prompter, logger, mainMenuChoice, basePath, jp };
 
   // Регистрируем стратегии
   const registry = new FileTypeRegistry();
   // .register(new IconCreator()) и т.д.
 
   if (mainMenuChoice === "module") {
-    registry.register(new PhpCreator()).register(new JsCreator()).register(new ScssCreator());
+    registry
+      .register(new PhpCreator())
+      .register(new JsCreator())
+      .register(new ScssCreator())
+      .register(new PhpScssCreator(basePath, ctx));
   }
   if (mainMenuChoice === "component") {
-    registry.register(new PhpComponentCreator()).register(new ScssCreator()).register(new JsCreator());
+    registry
+      .register(new PhpComponentCreator())
+      .register(new ScssCreator())
+      .register(new JsCreator());
   }
 
   await renderTree(basePath);
@@ -50,9 +63,6 @@ export default async function appMenu(basePath: string, mainMenuChoice: TMainMen
     logger.error(`Unknown file type: ${choice}`);
     return;
   }
-
-  // Контекст для стратегий
-  const ctx = { fs, prompter, logger, mainMenuChoice, basePath };
 
   // Вызов выбранной стратегии
   await creator.run(basePath, ctx as any);
