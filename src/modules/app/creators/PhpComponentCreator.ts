@@ -1,8 +1,8 @@
 // creators/PhpCreator.ts
 import { BaseCreator } from "../core/BaseCreator.js";
 import type { CreateContext } from "../core/types.js";
-import {ensureCamelCase} from "../core/validators.js";
-import includePhpFile from "../modules/includePhpFile.js";
+import { ensureCamelCase } from "../core/validators.js";
+import includeToFunctionsPhp from "../modules/includeToFunctionsPhp.js";
 
 export class PhpComponentCreator extends BaseCreator {
   readonly id = "php_component";
@@ -28,10 +28,7 @@ export class PhpComponentCreator extends BaseCreator {
   }
 
   protected async postCreate(filePath: string, ctx: CreateContext) {
-    await includePhpFile({
-      base_path: "", // Возьмём из параметров вызова run (см. ниже)
-      file_path: filePath,
-    });
+    await includeToFunctionsPhp(filePath);
     ctx.logger.success("PHP file created and included successfully.");
   }
 
