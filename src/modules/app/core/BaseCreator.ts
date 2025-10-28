@@ -28,7 +28,7 @@ export abstract class BaseCreator {
     return ensureNonEmpty(input) ?? ensureKebabCase(input);
   }
 
-  async create(basePath: string, ctx: CreateContext): Promise<string> {
+  async create(basePath: string, ctx: CreateContext, start_name: string = ''): Promise<string> {
     const { fs, prompter, logger } = ctx;
     const ext = this.ext();
     const sub = this.subdir();
@@ -41,7 +41,7 @@ export abstract class BaseCreator {
 
     await renderTree(work_dir);
 
-    const name = this.normalizeName(
+    const name = start_name || this.normalizeName(
       await prompter.input({
         message: `Enter the ${ext} file name (${this.formatHint()}), without extension:`,
         asyncValidate: async (input: string) => {

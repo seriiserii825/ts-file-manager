@@ -23,8 +23,8 @@ export class ScssCreator extends BaseCreator {
     ctx.logger.success("SCSS file created and included successfully.");
   }
 
-  async run(basePath: string, ctx: CreateContext): Promise<void> {
-    const filePath = await this.create(basePath, ctx);
+  async run(basePath: string, ctx: CreateContext, name: string = ''): Promise<void> {
+    const filePath = await this.create(basePath, ctx, name);
     // includeScssFile уже вызван в postCreate()
   }
 }
