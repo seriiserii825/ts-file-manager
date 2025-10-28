@@ -7,7 +7,8 @@ import { FileTypeRegistry } from "./core/FileTypeRegistry.js";
 import { PhpCreator } from "./creators/PhpCreator.js";
 import { JsCreator } from "./creators/JsCreator.js";
 import { ScssCreator } from "./creators/ScssCreator.js";
-import {renderTree} from "./utils/renderTree.js";
+import { renderTree } from "./utils/renderTree.js";
+import {PhpComponentCreator} from "./creators/PhpComponentCreator.js";
 
 export default async function appMenu(basePath: string, mainMenuChoice: TMainMenuResponse) {
   const logger = new ChalkLogger();
@@ -15,13 +16,17 @@ export default async function appMenu(basePath: string, mainMenuChoice: TMainMen
   const prompter = new ChalkFzfPrompter();
 
   // Регистрируем стратегии
-  const registry = new FileTypeRegistry()
-    .register(new PhpCreator())
-    .register(new JsCreator())
-    .register(new ScssCreator());
+  const registry = new FileTypeRegistry();
   // .register(new IconCreator()) и т.д.
 
-  await renderTree(basePath)
+  if (mainMenuChoice === "module") {
+    registry.register(new PhpCreator()).register(new JsCreator()).register(new ScssCreator());
+  }
+  if (mainMenuChoice === "component") {
+    registry.register(new PhpComponentCreator()).register(new ScssCreator()).register(new JsCreator());
+  }
+
+  await renderTree(basePath);
 
   const options = [
     ...registry.getOptions(),
@@ -29,7 +34,7 @@ export default async function appMenu(basePath: string, mainMenuChoice: TMainMen
     { value: "exit", label: "exit" },
   ];
 
-  const choice = await prompter.select("Select file type", options)
+  const choice = await prompter.select("Select file type", options);
 
   if (choice === "exit") {
     logger.error("Exiting the application.");
